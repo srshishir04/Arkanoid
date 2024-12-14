@@ -5,14 +5,16 @@ TagManager:
   serializedVersion: 3
   tags:
   - Ball
+  - Paddle
+  - DeathWall
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Ignore Raycast
   - Water
   - UI
-  - 
+  - UI
   - 
   - 
   - 

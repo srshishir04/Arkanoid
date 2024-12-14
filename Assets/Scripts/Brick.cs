@@ -1,10 +1,12 @@
 using System;
+using System.Collections.Generic;
 using static UnityEngine.ParticleSystem;
 using UnityEngine;
 
 public class Brick : MonoBehaviour
 {
     private SpriteRenderer sr;
+    private BoxCollider2D boxCollider;
 
     public int Hitpoints = 1;
 
@@ -12,10 +14,27 @@ public class Brick : MonoBehaviour
 
     public static event Action<Brick> OnBrickDestruction;
 
-    private void Start()
+    private void Awake()
     {
         this.sr = this.GetComponent<SpriteRenderer>();
-        this.sr.sprite = BrickManager.Instance.Sprites[this.Hitpoints - 1]; //delete
+        Ball.OnLightningBallEnable += OnLightningBallEnable;
+        Ball.OnLightningBallDisable += OnLightningBallDisable;
+    }
+
+    private void OnLightningBallEnable(Ball obj)
+    {
+        if (this != null)
+        {
+            this.boxCollider.isTrigger = true;
+        }
+    }
+
+    private void OnLightningBallDisable(Ball obj)
+    {
+        if (this != null)
+        {
+            this.boxCollider.isTrigger = false;
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -24,25 +43,73 @@ public class Brick : MonoBehaviour
         ApplyCollisionLogic(ball);
     }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        Ball ball = collision.gameObject.GetComponent<Ball>();
+        ApplyCollisionLogic(ball);
+
+    }
+
     private void ApplyCollisionLogic(Ball ball)
     {
         this.Hitpoints--;
 
-        if(this.Hitpoints <= 0)
+        if (this.Hitpoints <= 0 || (ball != null && ball.isLightningBall))
         {
+            if (BrickManager.Instance.RemainingBricks.Contains(this))
+            {
+                BrickManager.Instance.RemainingBricks.Remove(this);
+            }
+
             OnBrickDestruction?.Invoke(this);
-
+            OnBrickDestroy();
             SpawnDestroyEffect();
-
-            Destroy(this.gameObject);
-
+            Destroy(this.gameObject); // Destroy the brick
         }
-
         else
         {
             this.sr.sprite = BrickManager.Instance.Sprites[this.Hitpoints - 1];
         }
     }
+
+    private void OnBrickDestroy()
+    {
+        float buffSpawnChance = UnityEngine.Random.Range(0, 100f);
+        float deBuffSpawnChance = UnityEngine.Random.Range(0, 100f);
+        bool alreadySpawned = false;
+
+        if (buffSpawnChance <= CollectablesManager.Instance.BuffChance)
+        {
+            alreadySpawned = true;
+            Collectable newBuff = this.SpawnCollectable(true);
+        }
+
+        if (deBuffSpawnChance <= CollectablesManager.Instance.DebuffChance && !alreadySpawned)
+        {
+            Collectable newDebuff = this.SpawnCollectable(false);
+        }
+    }
+
+    private Collectable SpawnCollectable(bool isBuff)
+    {
+        List<Collectable> collection;
+
+        if (isBuff)
+        {
+            collection = CollectablesManager.Instance.AvailableBuffs;
+        }
+        else
+        {
+            collection = CollectablesManager.Instance.AvailableDebuffs;
+        }
+
+        int buffIndex = UnityEngine.Random.Range(0, collection.Count);
+        Collectable prefab = collection[buffIndex];
+        Collectable newCollectable = Instantiate(prefab, this.transform.position, Quaternion.identity) as Collectable;
+
+        return newCollectable;
+    }
+
 
     private void SpawnDestroyEffect()
     {
@@ -54,5 +121,20 @@ public class Brick : MonoBehaviour
         mm.startColor = this.sr.color;
 
         Destroy(effect, DestroyEffect.main.startLifetime.constant);
+    }
+
+    public void Init(Transform containerTransform, Sprite sprite, Color color, int hitpoints)
+    {
+        this.transform.SetParent(containerTransform);
+        this.sr.sprite = sprite;
+        this.sr.color = color;
+        this.Hitpoints = hitpoints;
+    }
+
+    private void OnDisable()
+    {
+        Ball.OnLightningBallEnable -= OnLightningBallEnable;
+        Ball.OnLightningBallDisable -= OnLightningBallDisable;
+
     }
 }
