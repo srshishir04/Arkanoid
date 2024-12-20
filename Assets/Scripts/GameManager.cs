@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
@@ -36,20 +37,33 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         this.Lives = this.AvaialableLives;
-        Screen.SetResolution(540, 960, false);
+        Screen.SetResolution(1920, 1080, false);
         Ball.onBallDeath += OnBallDeath;
         Brick.OnBrickDestruction += OnBrickDestruction;
     }
 
     private void OnBrickDestruction(Brick obj)
     {
-        if(BrickManager.Instance.RemainingBricks.Count <= 0)
+        if (BrickManager.Instance.RemainingBricks.Count <= 0)
         {
-            BallsManager.Instance.ResetBalls();
-            GameManager.Instance.IsGameStarted = false;
-            BrickManager.Instance.LoadNextLevel();
+            StartCoroutine(TransitionToNextLevel());
         }
     }
+
+    private IEnumerator TransitionToNextLevel()
+    {
+        GameManager.Instance.IsGameStarted = false;
+
+        // Reset balls and wait briefly to avoid ball hitting new bricks
+        BallsManager.Instance.ResetBalls();
+        yield return new WaitForSeconds(0.5f);
+
+        // Load the next level
+        BrickManager.Instance.LoadNextLevel();
+
+        
+    }
+
 
     public void RestartGame()
     {

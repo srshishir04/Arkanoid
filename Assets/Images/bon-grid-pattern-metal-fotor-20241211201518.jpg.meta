@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      bon-grid-pattern-metal-fotor-20241211201518_0: 8419022518080465407
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

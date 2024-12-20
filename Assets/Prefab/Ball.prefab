@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6637077057630814122}
   - component: {fileID: 1765173685097735064}
   - component: {fileID: 4762514183907129709}
-  - component: {fileID: -4733631519515916806}
+  - component: {fileID: 4728031070407575903}
   m_Layer: 0
   m_Name: Ball
   m_TagString: Ball
@@ -98,8 +98,8 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0.05}
-  m_Radius: 0.2
---- !u!114 &-4733631519515916806
+  m_Radius: 0.11
+--- !u!114 &4728031070407575903
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -111,7 +111,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa0e96d24b79b441db70ad53331ca5ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isLightningBall: 0
   lightningBallEffect: {fileID: 4023057462674335618}
+  lightningBallDuration: 10
 --- !u!1 &2800974284631624384
 GameObject:
   m_ObjectHideFlags: 0

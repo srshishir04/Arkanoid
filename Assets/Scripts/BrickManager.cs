@@ -39,7 +39,7 @@ public class BrickManager : MonoBehaviour
 
     public Color[] BrickColors;
 
-    public List <Brick>  RemainingBricks { get; set; }
+    public List<Brick> RemainingBricks { get; set; }
 
     public List<int[,]> LevelsData { get; set; }
 
@@ -53,14 +53,14 @@ public class BrickManager : MonoBehaviour
         this.RemainingBricks = new List<Brick>();
         this.LevelsData = this.LoadLevelsData();
         this.GenerateBricks();
-        
+
     }
 
     public void LoadNextLevel()
     {
         this.CurrentLevel++;
 
-        if(this.CurrentLevel >= this.LevelsData.Count)
+        if (this.CurrentLevel >= this.LevelsData.Count)
         {
             GameManager.Instance.ShowVictoryScreen();
         }
@@ -151,7 +151,7 @@ public class BrickManager : MonoBehaviour
                 }
 
                 currentRow++;
-                
+
             }
             else
             {
@@ -166,4 +166,10 @@ public class BrickManager : MonoBehaviour
 
         return levelsData;
     }
+
+    //public void ResetBricks()
+    //{
+    //    ClearRemainingBricks();
+    //    GenerateBricks();
+    //}
 }

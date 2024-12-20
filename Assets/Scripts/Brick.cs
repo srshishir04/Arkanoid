@@ -1,3 +1,4 @@
+
 using System;
 using System.Collections.Generic;
 using static UnityEngine.ParticleSystem;
@@ -17,6 +18,8 @@ public class Brick : MonoBehaviour
     private void Awake()
     {
         this.sr = this.GetComponent<SpriteRenderer>();
+        this.boxCollider = this.GetComponent<BoxCollider2D>();
+           
         Ball.OnLightningBallEnable += OnLightningBallEnable;
         Ball.OnLightningBallDisable += OnLightningBallDisable;
     }
@@ -46,6 +49,7 @@ public class Brick : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         Ball ball = collision.gameObject.GetComponent<Ball>();
+        Debug.Log($"Ball entered trigger of {gameObject.name}. IsLightningBall: {ball?.isLightningBall}");
         ApplyCollisionLogic(ball);
 
     }
@@ -56,11 +60,7 @@ public class Brick : MonoBehaviour
 
         if (this.Hitpoints <= 0 || (ball != null && ball.isLightningBall))
         {
-            if (BrickManager.Instance.RemainingBricks.Contains(this))
-            {
-                BrickManager.Instance.RemainingBricks.Remove(this);
-            }
-
+            BrickManager.Instance.RemainingBricks.Remove(this);
             OnBrickDestruction?.Invoke(this);
             OnBrickDestroy();
             SpawnDestroyEffect();

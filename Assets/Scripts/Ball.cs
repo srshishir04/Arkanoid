@@ -1,3 +1,4 @@
+
 using UnityEngine;
 using System;
 using System.Collections;
@@ -31,6 +32,7 @@ public class Ball : MonoBehaviour
         if (!this.isLightningBall)
         {
             this.isLightningBall = true;
+            Debug.Log("LightningBall activated.");
             this.sr.enabled = false;
             lightningBallEffect.gameObject.SetActive(true);
             StartCoroutine(StopLightningBallAfterTime(this.lightningBallDuration));
@@ -51,6 +53,7 @@ public class Ball : MonoBehaviour
         if (this.isLightningBall)
         {
             this.isLightningBall = false;
+            Debug.Log("LightningBall deactivated.");
             this.sr.enabled = true;
             lightningBallEffect.gameObject.SetActive(false);
 

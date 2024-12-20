@@ -27,6 +27,7 @@ public class Paddle : MonoBehaviour
     //private BoxCollider2D boxCol;
 
 
+
     private void Start()
     {
         mainCamera = Camera.main;
@@ -47,7 +48,7 @@ public class Paddle : MonoBehaviour
     private void PaddleMovement()
     {
         // Define fixed left and right clamps
-        float leftClampWorld = -6.5f;
+        float leftClampWorld = -6.7f;
         float rightClampWorld = 6.7f;
 
         // Get mouse position in world space
@@ -88,13 +89,20 @@ public class Paddle : MonoBehaviour
             // Debugging: Log collision info
             Debug.Log($"Ball Hit Point: {hitPoint}, Paddle Center: {paddleCenter}, Difference: {difference}");
         }
+
     }
+
+    public void ResetPosition()
+    {
+        transform.position = new Vector3(0, transform.position.y, 0); // Center the paddle
+    }
+
 
     private void OnDrawGizmos()
     {
         if (!Application.isPlaying || mainCamera == null) return;
 
-        float leftClampWorld = -6.5f;
+        float leftClampWorld = -6.7f;
         float rightClampWorld = 6.7f;
 
         Gizmos.color = Color.red;
@@ -102,3 +110,6 @@ public class Paddle : MonoBehaviour
         Gizmos.DrawLine(new Vector3(rightClampWorld, -5, 0), new Vector3(rightClampWorld, 5, 0));
     }
 }
+
+
+//this.transform.position;

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 115174542947215791}
   - component: {fileID: 4528701706450179608}
   - component: {fileID: 8255031945733802046}
-  - component: {fileID: 4118593894291203512}
+  - component: {fileID: 4805103904314503485}
   m_Layer: 0
   m_Name: LightningBall
   m_TagString: Untagged
@@ -108,7 +108,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.3, y: 0.3}
   m_EdgeRadius: 0
---- !u!114 &4118593894291203512
+--- !u!114 &4805103904314503485
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

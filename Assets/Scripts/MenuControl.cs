@@ -1,61 +1,80 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class MenuControl : MonoBehaviour
 {
-    private const string SavedLevelKey = "SavedLevel"; // Key to store the saved level
-
     public GameObject settingsPanel;
+    private SaveLoadManager saveLoadManager;
 
-    // Called when Start is pressed in the Main Menu
+    void Start()
+    {
+        saveLoadManager = FindObjectOfType<SaveLoadManager>();
+
+        if (saveLoadManager == null)
+        {
+            Debug.LogError("SaveLoadManager not found in the scene!");
+        }
+    }
+
     public void StartGame()
     {
         SceneManager.LoadScene("GameScene");
 
-        if (PlayerPrefs.HasKey(SavedLevelKey))
+        // Safely subscribe to scene loaded event
+        SceneManager.sceneLoaded += OnGameSceneLoaded;
+    }
+
+    private void OnGameSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "GameScene")
         {
-            // Load saved level
-            string savedLevel = PlayerPrefs.GetString(SavedLevelKey);
-            SceneManager.LoadScene(savedLevel);
-        }
-        else
-        {
-            // Start from the first level
-            SceneManager.LoadScene("Level1"); // Replace with your first level's scene name
+            if (BrickManager.Instance != null)
+            {
+                int savedLevel = (saveLoadManager != null && saveLoadManager.HasSave())
+                    ? saveLoadManager.LoadGame()
+                    : 0; // Load saved level or start fresh
+
+                BrickManager.Instance.LoadLevel(savedLevel);
+            }
+            else
+            {
+                Debug.LogError("BrickManager not found in the GameScene!");
+            }
+
+            // Unsubscribe after handling
+            SceneManager.sceneLoaded -= OnGameSceneLoaded;
         }
     }
 
-    // Called when Main Menu is pressed in the Pause Menu
     public void MainMenu()
     {
-        // Save the current level
-        string currentScene = SceneManager.GetActiveScene().name;
-        PlayerPrefs.SetString(SavedLevelKey, currentScene);
-        PlayerPrefs.Save();
+        if (saveLoadManager != null && BrickManager.Instance != null)
+        {
+            saveLoadManager.SaveGame(BrickManager.Instance.CurrentLevel); // Save progress
+        }
 
-        // Load Main Menu scene
-        SceneManager.LoadScene("MainMenu"); // Replace with your main menu's scene name
+        Time.timeScale = 1; // Reset time scale
+        SceneManager.LoadScene("MainMenu");
     }
 
     public void ShowOptions()
     {
-        if (settingsPanel.activeSelf == false)
+        if (settingsPanel != null)
         {
-            settingsPanel.SetActive(true);
+            settingsPanel.SetActive(!settingsPanel.activeSelf);
         }
         else
         {
-            settingsPanel.SetActive(false);
+            Debug.LogError("Settings panel is not assigned!");
         }
     }
 
-    // Called when Quit Game is pressed
     public void QuitGame()
     {
-        // Clear saved progress
-        PlayerPrefs.DeleteKey(SavedLevelKey);
+        if (saveLoadManager != null)
+        {
+            saveLoadManager.ClearSave();
+        }
 
         Debug.Log("Exiting game...");
 
