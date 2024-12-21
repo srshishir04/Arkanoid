@@ -37,7 +37,12 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         this.Lives = this.AvaialableLives;
-        Screen.SetResolution(1920, 1080, false);
+
+        int width = 1920;
+        int height = 1080;
+        bool isFullscreen = true; // Change to false if you want windowed mode
+        Screen.SetResolution(width, height, isFullscreen);
+
         Ball.onBallDeath += OnBallDeath;
         Brick.OnBrickDestruction += OnBrickDestruction;
     }

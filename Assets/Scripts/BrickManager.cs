@@ -79,15 +79,30 @@ public class BrickManager : MonoBehaviour
 
     private void ClearRemainingBricks()
     {
-        foreach (Brick brick in this.RemainingBricks.ToList())
+        // Use a reverse loop to safely modify the list while iterating
+        for (int i = this.RemainingBricks.Count - 1; i >= 0; i--)
         {
+            Brick brick = this.RemainingBricks[i];
             if (brick != null) // Check if the brick still exists
             {
                 Destroy(brick.gameObject);
             }
-            this.RemainingBricks.Remove(brick); // Safely remove the brick from the list
+            this.RemainingBricks.RemoveAt(i); // Remove brick from the list
         }
     }
+
+
+    //private void ClearRemainingBricks()
+    //{
+    //    foreach (Brick brick in this.RemainingBricks.ToList())
+    //    {
+    //        if (brick != null) // Check if the brick still exists
+    //        {
+    //            Destroy(brick.gameObject);
+    //        }
+    //        this.RemainingBricks.Remove(brick); // Safely remove the brick from the list
+    //    }
+    //}
 
 
     private void GenerateBricks()
