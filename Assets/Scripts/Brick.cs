@@ -52,25 +52,62 @@ public class Brick : MonoBehaviour
         Debug.Log($"Ball entered trigger of {gameObject.name}. IsLightningBall: {ball?.isLightningBall}");
         ApplyCollisionLogic(ball);
 
+
     }
+
+    private void OnDisable()
+    {
+        Debug.Log($"Brick {gameObject.name} disabled. Unsubscribing from events.");
+        Ball.OnLightningBallEnable -= OnLightningBallEnable;
+        Ball.OnLightningBallDisable -= OnLightningBallDisable;
+        BrickManager.Instance?.RemainingBricks.Remove(this);
+    }
+
 
     private void ApplyCollisionLogic(Ball ball)
     {
+        Debug.Log($"Brick {gameObject.name} hit! Hitpoints before: {Hitpoints}");
+
         this.Hitpoints--;
 
         if (this.Hitpoints <= 0 || (ball != null && ball.isLightningBall))
         {
-            BrickManager.Instance.RemainingBricks.Remove(this);
+            Debug.Log($"Brick {gameObject.name} destroyed!");
+            if (BrickManager.Instance.RemainingBricks.Contains(this))
+            {
+                BrickManager.Instance.RemainingBricks.Remove(this);
+                Debug.Log($"Brick removed from RemainingBricks. Remaining count: {BrickManager.Instance.RemainingBricks.Count}");
+            }
             OnBrickDestruction?.Invoke(this);
-            OnBrickDestroy();
             SpawnDestroyEffect();
-            Destroy(this.gameObject); // Destroy the brick
+            Destroy(this.gameObject);
         }
         else
         {
+            Debug.Log($"Brick {gameObject.name} hitpoints reduced to: {Hitpoints}");
             this.sr.sprite = BrickManager.Instance.Sprites[this.Hitpoints - 1];
         }
     }
+
+
+
+    //private void ApplyCollisionLogic(Ball ball)
+    //{
+    //    this.Hitpoints--;
+
+    //    if (this.Hitpoints <= 0 || (ball != null && ball.isLightningBall))
+    //    {
+    //        BrickManager.Instance.RemainingBricks.Remove(this);
+    //        OnBrickDestruction?.Invoke(this);
+    //        OnBrickDestroy();
+    //        SpawnDestroyEffect();
+    //        Destroy(this.gameObject); // Destroy the brick
+    //    }
+    //    else
+    //    {
+    //        this.sr.sprite = BrickManager.Instance.Sprites[this.Hitpoints - 1];
+    //    }
+    //}
 
     private void OnBrickDestroy()
     {
@@ -131,10 +168,10 @@ public class Brick : MonoBehaviour
         this.Hitpoints = hitpoints;
     }
 
-    private void OnDisable()
-    {
-        Ball.OnLightningBallEnable -= OnLightningBallEnable;
-        Ball.OnLightningBallDisable -= OnLightningBallDisable;
+    //private void OnDisable()
+    //{
+    //    Ball.OnLightningBallEnable -= OnLightningBallEnable;
+    //    Ball.OnLightningBallDisable -= OnLightningBallDisable;
 
-    }
+    //}
 }

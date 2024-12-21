@@ -10,15 +10,16 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance => _instance;
     private void Awake()
     {
-        if (_instance != null)
+        if (_instance != null && _instance != this)
         {
             Destroy(gameObject);
+            return; 
         }
-        else
-        {
-            _instance = this;
-        }
+
+        _instance = this;
+        DontDestroyOnLoad(gameObject); 
     }
+
 
     #endregion
 
@@ -49,11 +50,12 @@ public class GameManager : MonoBehaviour
 
     private void OnBrickDestruction(Brick obj)
     {
-        if (BrickManager.Instance.RemainingBricks.Count <= 0)
+        if (BrickManager.Instance != null && BrickManager.Instance.RemainingBricks.Count <= 0)
         {
             StartCoroutine(TransitionToNextLevel());
         }
     }
+
 
     private IEnumerator TransitionToNextLevel()
     {
@@ -70,30 +72,32 @@ public class GameManager : MonoBehaviour
     }
 
 
-    public void RestartGame()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-    }
+    //public void RestartGame()
+    //{
+    //    SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    //}
 
     private void OnBallDeath(Ball obj)
     {
-        if (BallsManager.Instance.Balls.Count <= 0)
+        if (BallsManager.Instance != null && BallsManager.Instance.Balls.Count <= 0)
         {
             this.Lives--;
         }
 
         if (this.Lives < 1)
         {
-            gameOverScreen.SetActive(true);
+            if (gameOverScreen != null)
+                gameOverScreen.SetActive(true);
         }
         else
         {
             OnLiveLost?.Invoke(this.Lives);
-            BallsManager.Instance.ResetBalls();
+            BallsManager.Instance?.ResetBalls();
             IsGameStarted = false;
-            BrickManager.Instance.LoadLevel(BrickManager.Instance.CurrentLevel);
+            BrickManager.Instance?.LoadLevel(BrickManager.Instance.CurrentLevel);
         }
     }
+
 
     internal void ShowVictoryScreen()
     {
@@ -103,5 +107,28 @@ public class GameManager : MonoBehaviour
     private void OnDisable()
     {
         Ball.onBallDeath -= OnBallDeath;
+        Brick.OnBrickDestruction -= OnBrickDestruction; 
     }
+
+
+    public void RestartGame()
+    {
+        Debug.Log("Restarting game...");
+
+        BrickManager.Instance?.ResetLevel(); // Reset the bricks.
+        BallsManager.Instance?.ResetBalls(); // Reset the balls.
+        Lives = AvaialableLives;             // Reset lives.
+        IsGameStarted = false;               // Mark the game as not started.
+
+        if (gameOverScreen != null)
+            gameOverScreen.SetActive(false); // Hide the game over screen.
+
+        if (victoryScreen != null)
+            victoryScreen.SetActive(false);  // Hide the victory screen.
+
+        Debug.Log("Game restarted successfully. Lives reset to " + Lives);
+    }
+
+
+
 }

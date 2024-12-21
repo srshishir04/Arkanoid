@@ -79,17 +79,32 @@ public class BrickManager : MonoBehaviour
 
     private void ClearRemainingBricks()
     {
-        // Use a reverse loop to safely modify the list while iterating
+        Debug.Log($"Clearing {RemainingBricks.Count} remaining bricks...");
         for (int i = this.RemainingBricks.Count - 1; i >= 0; i--)
         {
             Brick brick = this.RemainingBricks[i];
-            if (brick != null) // Check if the brick still exists
+            if (brick != null)
             {
+                Debug.Log($"Destroying brick: {brick.gameObject.name}");
                 Destroy(brick.gameObject);
             }
-            this.RemainingBricks.RemoveAt(i); // Remove brick from the list
+            else
+            {
+                Debug.LogWarning("Found null brick in RemainingBricks list.");
+            }
         }
+        this.RemainingBricks.Clear();
+        Debug.Log("Remaining bricks cleared successfully.");
     }
+
+
+    private void OnDestroy()
+    {
+        // Clean up subscriptions to avoid memory leaks.
+        OnLevelLoaded = null;
+    }
+
+
 
 
     //private void ClearRemainingBricks()
@@ -105,8 +120,46 @@ public class BrickManager : MonoBehaviour
     //}
 
 
+    //private void GenerateBricks()
+    //{
+    //    int[,] currentLevelData = this.LevelsData[this.CurrentLevel];
+    //    float currentSpawnX = initialBrickSpawnPositionX;
+    //    float currentSpawnY = initialBrickSpawnPositionY;
+    //    float zShift = 0;
+
+    //    for (int row = 0; row < this.maxRows; row++)
+    //    {
+    //        for (int col = 0; col < this.maxCols; col++)
+    //        {
+    //            int brickType = currentLevelData[row, col];
+
+    //            if (brickType > 0)
+    //            {
+    //                Brick newBrick = Instantiate(brickPrefab, new Vector3(currentSpawnX, currentSpawnY, 0.0f - zShift), Quaternion.identity) as Brick;
+    //                newBrick.Init(bricksContainer.transform, this.Sprites[brickType - 1], this.BrickColors[brickType], brickType);
+
+    //                this.RemainingBricks.Add(newBrick);
+    //                zShift += 0.0001f;
+    //            }
+
+    //            currentSpawnX += shiftAmount;
+    //            if (col + 1 == this.maxCols)
+    //            {
+    //                currentSpawnX = initialBrickSpawnPositionX;
+    //            }
+    //        }
+
+    //        currentSpawnY -= shiftAmount;
+    //    }
+    //    this.InitialBricksCount = this.RemainingBricks.Count;
+    //    OnLevelLoaded?.Invoke();
+
+    //}
+
     private void GenerateBricks()
     {
+        this.RemainingBricks.Clear(); // Clear any stale references.
+
         int[,] currentLevelData = this.LevelsData[this.CurrentLevel];
         float currentSpawnX = initialBrickSpawnPositionX;
         float currentSpawnY = initialBrickSpawnPositionY;
@@ -120,7 +173,7 @@ public class BrickManager : MonoBehaviour
 
                 if (brickType > 0)
                 {
-                    Brick newBrick = Instantiate(brickPrefab, new Vector3(currentSpawnX, currentSpawnY, 0.0f - zShift), Quaternion.identity) as Brick;
+                    Brick newBrick = Instantiate(brickPrefab, new Vector3(currentSpawnX, currentSpawnY, 0.0f - zShift), Quaternion.identity);
                     newBrick.Init(bricksContainer.transform, this.Sprites[brickType - 1], this.BrickColors[brickType], brickType);
 
                     this.RemainingBricks.Add(newBrick);
@@ -136,10 +189,12 @@ public class BrickManager : MonoBehaviour
 
             currentSpawnY -= shiftAmount;
         }
-        this.InitialBricksCount = this.RemainingBricks.Count;
-        OnLevelLoaded?.Invoke();
 
+        this.InitialBricksCount = this.RemainingBricks.Count;
+        Debug.Log($"Generated {RemainingBricks.Count} bricks for level {this.CurrentLevel}.");
+        OnLevelLoaded?.Invoke();
     }
+
 
     private List<int[,]> LoadLevelsData()
     {
@@ -181,6 +236,16 @@ public class BrickManager : MonoBehaviour
 
         return levelsData;
     }
+
+    public void ResetLevel()
+    {
+        Debug.Log("Resetting level...");
+        ClearRemainingBricks();
+        GenerateBricks();
+        Debug.Log("Level reset complete. Total bricks: " + RemainingBricks.Count);
+    }
+
+
 
     //public void ResetBricks()
     //{
