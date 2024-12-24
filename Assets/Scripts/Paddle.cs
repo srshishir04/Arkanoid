@@ -49,7 +49,7 @@ public class Paddle : MonoBehaviour
     {
         // Define fixed left and right clamps
         float leftClampWorld = -6.7f;
-        float rightClampWorld = 6.7f;
+        float rightClampWorld = 6.72f;
 
         // Get mouse position in world space
         float mousePositionWorldX = mainCamera.ScreenToWorldPoint(
@@ -103,7 +103,7 @@ public class Paddle : MonoBehaviour
         if (!Application.isPlaying || mainCamera == null) return;
 
         float leftClampWorld = -6.7f;
-        float rightClampWorld = 6.7f;
+        float rightClampWorld = 6.72f;
 
         Gizmos.color = Color.red;
         Gizmos.DrawLine(new Vector3(leftClampWorld, -5, 0), new Vector3(leftClampWorld, 5, 0));

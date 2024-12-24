@@ -968,7 +968,7 @@ MonoBehaviour:
   - {fileID: 885733277824278296, guid: 770a8f99d95c9415c98a61706cbd7a50, type: 3}
   - {fileID: 4805103904314503485, guid: 0e156fa3b28cd401aa48ede4bed3562d, type: 3}
   AvailableDebuffs: []
-  BuffChance: 5
+  BuffChance: 10
   DebuffChance: 0
 --- !u!1 &564344543
 GameObject:

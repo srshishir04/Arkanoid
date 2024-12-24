@@ -1,4 +1,3 @@
-
 using System;
 using System.Collections.Generic;
 using static UnityEngine.ParticleSystem;
@@ -66,25 +65,26 @@ public class Brick : MonoBehaviour
 
     private void ApplyCollisionLogic(Ball ball)
     {
-        Debug.Log($"Brick {gameObject.name} hit! Hitpoints before: {Hitpoints}");
+        //Debug.Log($"Brick {gameObject.name} hit! Hitpoints before: {Hitpoints}");
 
         this.Hitpoints--;
 
         if (this.Hitpoints <= 0 || (ball != null && ball.isLightningBall))
         {
-            Debug.Log($"Brick {gameObject.name} destroyed!");
+            //Debug.Log($"Brick {gameObject.name} destroyed!");
             if (BrickManager.Instance.RemainingBricks.Contains(this))
             {
                 BrickManager.Instance.RemainingBricks.Remove(this);
-                Debug.Log($"Brick removed from RemainingBricks. Remaining count: {BrickManager.Instance.RemainingBricks.Count}");
+                //Debug.Log($"Brick removed from RemainingBricks. Remaining count: {BrickManager.Instance.RemainingBricks.Count}");
             }
             OnBrickDestruction?.Invoke(this);
+            OnBrickDestroy();
             SpawnDestroyEffect();
             Destroy(this.gameObject);
         }
         else
         {
-            Debug.Log($"Brick {gameObject.name} hitpoints reduced to: {Hitpoints}");
+            //Debug.Log($"Brick {gameObject.name} hitpoints reduced to: {Hitpoints}");
             this.sr.sprite = BrickManager.Instance.Sprites[this.Hitpoints - 1];
         }
     }
